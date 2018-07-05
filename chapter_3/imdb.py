@@ -74,21 +74,61 @@ model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 history = model.fit(
     partial_x_train,
     partial_y_train,
-    epochs=20,
+    epochs=4,
     batch_size=512,
     validation_data=(x_val, y_val))
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-history_dict = history.history
-loss_values = history_dict['loss']
-val_loss_values = history_dict['val_loss']
-#epochs = range(1, len(acc) + 1)
-epochs = range(1, 20 + 1)
-plt.plot(epochs, loss_values, 'bo', label='Training loss')
-plt.plot(epochs, val_loss_values, 'b', label='Validation loss')
-plt.title('Training and validation loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
+# history_dict = history.history
+# loss_values = history_dict['loss']
+# val_loss_values = history_dict['val_loss']
+# #epochs = range(1, len(acc) + 1)
+# epochs = range(1, 20 + 1)
+# plt.plot(epochs, loss_values, 'bo', label='Training loss')
+# plt.plot(epochs, val_loss_values, 'b', label='Validation loss')
+# plt.title('Training and validation loss')
+# plt.xlabel('Epochs')
+# plt.ylabel('Loss')
+# plt.legend()
+# plt.show()
+
+# plt.clf()
+# acc_values = history_dict['acc']
+# val_acc_values = history_dict['val_acc']
+# plt.plot(epochs, acc_values, 'bo', label='Training acc')
+# plt.plot(epochs, val_acc_values, 'b', label='Validation acc')
+# plt.title('Training and validation accuracy')
+# plt.xlabel('Epochs')
+# plt.ylabel('Loss')
+# plt.legend()
+# plt.show()
+
+
+def decodeReview(x, index):
+    return ' '.join([reverse_word_index.get(i - 3, '?') for i in x[index]])
+
+
+def printReview(x, y, index):
+    print('---', y[index], 'Negative' if y[index] < 0.5 else 'Positive', '---')
+    print(decodeReview(x, index))
+    print()
+
+
+result = model.evaluate(x_test, y_test)
+#y = model.predict(x_test)
+
+#for i in range(10):
+#printReview(test_data, y, 1)
+
+
+def encodeReview(review):
+    results = np.zeros((1, 10000))
+    results[0, [word_index[word] + 3 for word in review.split()]] = 1.
+    return results
+
+review = input('please input review:')
+while review != "":
+    y = model.predict(encodeReview(review))
+    print(y)
+    review = input('please input review:')
