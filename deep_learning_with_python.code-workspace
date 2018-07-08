@@ -15,7 +15,4 @@
 			"path": "."
 		}
 	],
-	"settings": {
-		"python.pythonPath": "/usr/local/bin/python3"
-	}
 }

@@ -1,3 +1,11 @@
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+bin
+lib
+include
+pip-selfcheck.json
+
 *.npy
 *.gz
 *.png
