@@ -11,3 +11,5 @@ pip-selfcheck.json
 *.png
 *.zip
 *.pkl
+*.jpg
+*.jpeg
