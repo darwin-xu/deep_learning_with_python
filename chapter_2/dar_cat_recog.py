@@ -1,7 +1,10 @@
-import keras
 import os
-import scipy
+
+import keras
 import numpy as np
+import scipy
+from keras import layers, losses, metrics, models, optimizers
+from PIL import Image
 
 
 # Load the images
@@ -22,8 +25,10 @@ def loadPicture(path):
 # Prepare data
 imgs1 = loadPicture('chapter_2/cats')
 label1 = np.full((imgs1.shape[0], ), 1.0)
+label1 = np.asarray(label1).astype('float32')
 imgs2 = loadPicture('chapter_2/dogs')
 label2 = np.full((imgs2.shape[0], ), 0.0)
+label2 = np.asarray(label2).astype('float32')
 imgs = np.concatenate((imgs1, imgs2))
 imgs = np.reshape(imgs, (imgs.shape[0], -1))
 label = np.concatenate((label1, label2))
@@ -41,18 +46,19 @@ training_label = label[:int(pivot)]
 test_sample = imgs[int(pivot):, ]
 test_label = label[int(pivot):]
 
-# Prepare the network
-from keras import models
-from keras import layers
-
 network = models.Sequential()
-network.add(
-    layers.Dense(512, activation='relu', input_shape=(128 * 128 * 3, )))
-network.add(layers.Dense(512, activation='relu'))
+network.add(layers.Dense(16, activation='relu', input_shape=(128 * 128 * 3, )))
+network.add(layers.Dense(16, activation='relu'))
 network.add(layers.Dense(1, activation='sigmoid'))
+network.summary()
 
-network.compile(
-    optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+# network.compile(
+#     optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+network.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+# network.compile(
+#     optimizer=optimizers.RMSprop(lr=0.001),
+#     loss=losses.binary_crossentropy,
+#     metrics=[metrics.binary_accuracy])
 
 result = network.evaluate(training_sample, training_label)
 print('training set, before: ', result)
@@ -62,8 +68,8 @@ print('test     set, before: ', result)
 network.fit(
     training_sample,
     training_label,
-    epochs=3,
-    batch_size=128,
+    epochs=10,
+    batch_size=512,
     validation_data=(test_sample, test_label))
 
 result = network.evaluate(training_sample, training_label)

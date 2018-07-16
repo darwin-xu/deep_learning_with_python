@@ -25,7 +25,9 @@ y_train = np.asarray(train_labels).astype('float32')
 y_test = np.asarray(test_labels).astype('float32')
 
 print(x_train.shape)
+print(y_train.shape)
 print(x_test.shape)
+print(y_test.shape)
 
 from keras import models
 from keras import layers
