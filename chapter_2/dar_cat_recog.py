@@ -54,12 +54,19 @@ network.add(layers.Dense(1, activation='sigmoid'))
 network.compile(
     optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
+result = network.evaluate(training_sample, training_label)
+print('training set, before: ', result)
+result = network.evaluate(test_sample, test_label)
+print('test     set, before: ', result)
+
 network.fit(
     training_sample,
     training_label,
-    epochs=20,
+    epochs=3,
     batch_size=128,
     validation_data=(test_sample, test_label))
 
+result = network.evaluate(training_sample, training_label)
+print('training set, after : ', result)
 result = network.evaluate(test_sample, test_label)
-print(result)
+print('test     set, after : ', result)
