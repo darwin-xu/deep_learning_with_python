@@ -14,7 +14,7 @@ def loadPicture(path):
     for pic in catPictures:
         try:
             img = scipy.misc.imread(os.path.join(path, pic))
-            img = scipy.misc.imresize(img, (128, 128))
+            img = scipy.misc.imresize(img, (64, 64))
             if img.shape[2] == 3:
                 imgs.append(img)
         except OSError:
@@ -31,6 +31,7 @@ label2 = np.full((imgs2.shape[0], ), 0.0)
 label2 = np.asarray(label2).astype('float32')
 imgs = np.concatenate((imgs1, imgs2))
 imgs = np.reshape(imgs, (imgs.shape[0], -1))
+imgs = np.divide(imgs, 255)
 label = np.concatenate((label1, label2))
 
 # Shuffle the data
@@ -47,14 +48,15 @@ test_sample = imgs[int(pivot):, ]
 test_label = label[int(pivot):]
 
 network = models.Sequential()
-network.add(layers.Dense(16, activation='relu', input_shape=(128 * 128 * 3, )))
-network.add(layers.Dense(16, activation='relu'))
+network.add(layers.Dense(128, activation='relu', input_shape=(64 * 64 * 3, )))
+network.add(layers.Dense(128, activation='relu'))
 network.add(layers.Dense(1, activation='sigmoid'))
+#network.add(layers.Dense(1, activation='sigmoid', input_shape=(64 * 64 * 3, )))
 network.summary()
 
-# network.compile(
-#     optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-network.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+network.compile(
+    optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+#network.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 # network.compile(
 #     optimizer=optimizers.RMSprop(lr=0.001),
 #     loss=losses.binary_crossentropy,
@@ -65,14 +67,24 @@ print('training set, before: ', result)
 result = network.evaluate(test_sample, test_label)
 print('test     set, before: ', result)
 
+# p1 = network.predict(training_sample)
+# print(p1)
+# p2 = network.predict(test_sample)
+# print(p2)
+
 network.fit(
     training_sample,
     training_label,
-    epochs=10,
-    batch_size=512,
+    epochs=20,
+    batch_size=128,
     validation_data=(test_sample, test_label))
 
 result = network.evaluate(training_sample, training_label)
 print('training set, after : ', result)
 result = network.evaluate(test_sample, test_label)
 print('test     set, after : ', result)
+
+p1 = network.predict(training_sample)
+print(p1)
+p2 = network.predict(test_sample)
+print(p2)
